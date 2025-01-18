@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Eventify</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="go_to_event_details">Go to Event Details</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to login</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="click_to_register">click to register</string>
+    <string name="logout">Logout</string>
+    <string name="create_event">Create Event</string>
+</resources>

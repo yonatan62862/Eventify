@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.eventify.app.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_costsFragment"
+            app:destination="@id/costsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_eventUpdatesFragment"
+            app:destination="@id/eventUpdatesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/costsFragment"
+        android:name="com.eventify.app.CostsFragment"
+        android:label="Costs Calculator"
+        tools:layout="@layout/fragment_costs" />
+    <fragment
+        android:id="@+id/eventUpdatesFragment"
+        android:name="com.eventify.app.EventUpdatesFragment"
+        android:label="Event Updates"
+        tools:layout="@layout/fragment_event_updates" />
+    <fragment
+        android:id="@+id/guestListFragment"
+        android:name="com.eventify.app.GuestListFragment"
+        android:label="fragment_guest_list"
+        tools:layout="@layout/fragment_guest_list" />
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.eventify.app.CreateEventFragment"
+        android:label="fragment_create_event"
+        tools:layout="@layout/fragment_create_event" />
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.eventify.app.EditEventFragment"
+        android:label="fragment_edit_event"
+        tools:layout="@layout/fragment_edit_event" />
+    <fragment
+        android:id="@+id/postFeedFragment"
+        android:name="com.eventify.app.PostFeedFragment"
+        android:label="fragment_post_feed"
+        tools:layout="@layout/fragment_post_feed" />
+    <fragment
+        android:id="@+id/analyticsFragment"
+        android:name="com.eventify.app.AnalyticsFragment"
+        android:label="fragment_analytics"
+        tools:layout="@layout/fragment_analytics" />
+</navigation>

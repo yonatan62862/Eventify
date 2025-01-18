@@ -1,0 +1,7 @@
+/build
+app/google-services.json
+.idea/
+.kotlin/
+gradlew
+gradlew.bat
+build.gradle.kts
