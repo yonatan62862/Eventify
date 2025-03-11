@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.eventify.app.data.local.AppDatabase
 import com.eventify.app.data.local.EventEntity
-import com.eventify.app.data.local.remote.EventRepository
+import com.eventify.app.data.remote.EventRepository
 import kotlinx.coroutines.launch
 
 class EventViewModel(application: Application) : AndroidViewModel(application) {

@@ -1,22 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".ui.HomeFragment">
 
-    <Button
-        android:id="@+id/btnCosts"
-        android:layout_width="match_parent"
+    <!-- כותרת -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to Costs" />
+        android:text="Eventify"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"
+        android:textColor="@android:color/black"/>
 
-    <Button
-        android:id="@+id/btnEventUpdates"
-        android:layout_width="match_parent"
+    <!-- Grid Layout עבור הכפתורים -->
+    <GridLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to Event Updates" />
+        android:columnCount="2"
+        android:rowCount="2"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center">
 
+        <!-- כפתור My Profile -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMyProfile"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:text="My Profile"
+            android:backgroundTint="#FF3B3B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"
+            android:layout_margin="8dp"/>
+
+        <!-- כפתור My Events -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMyEvents"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:text="My Events"
+            android:backgroundTint="#FF3B3B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"
+            android:layout_margin="8dp"/>
+
+    </GridLayout>
+
+    <!-- כפתור Create Event -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCreateEvent"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        android:text="Create Event"
+        android:backgroundTint="#FF3B3B"
+        android:textColor="@android:color/white"
+        app:cornerRadius="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@android:color/white"
+        app:iconPadding="12dp"
+        android:textSize="18sp"/>
 </LinearLayout>

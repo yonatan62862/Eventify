@@ -1,4 +1,4 @@
-package com.eventify.app
+package com.eventify.app.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import com.eventify.app.R
 
 class HomeFragment : Fragment() {
 
@@ -23,12 +24,16 @@ class HomeFragment : Fragment() {
 
         val navController = findNavController()
 
-        view.findViewById<Button>(R.id.btnCosts).setOnClickListener {
-            navController.navigate(R.id.action_homeFragment_to_costsFragment)
+        view.findViewById<Button>(R.id.btnMyProfile).setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_myProfileFragment)
         }
 
-        view.findViewById<Button>(R.id.btnEventUpdates).setOnClickListener {
-            navController.navigate(R.id.action_homeFragment_to_eventUpdatesFragment)
+        view.findViewById<Button>(R.id.btnMyEvents).setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_myEventsFragment)
+        }
+
+        view.findViewById<Button>(R.id.btnCreateEvent).setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_createEventFragment)
         }
     }
 }

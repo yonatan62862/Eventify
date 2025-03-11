@@ -11,7 +11,7 @@ interface EventDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEvent(event: EventEntity)
 
-    @Query("SELECT * FROM events WHERE ownerId = :userId ORDER BY date DESC")
+    @Query("SELECT * FROM events WHERE ownerId = :userId ORDER BY startDate DESC")
     suspend fun getUserEvents(userId: String): List<EventEntity>
 
     @Query("DELETE FROM events WHERE id = :eventId")

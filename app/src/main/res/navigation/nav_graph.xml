@@ -7,16 +7,32 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.eventify.app.HomeFragment"
+        android:name="com.eventify.app.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_homeFragment_to_costsFragment"
-            app:destination="@id/costsFragment" />
+            android:id="@+id/action_homeFragment_to_myProfileFragment"
+            app:destination="@id/myProfileFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_eventUpdatesFragment"
-            app:destination="@id/eventUpdatesFragment" />
+            android:id="@+id/action_homeFragment_to_myEventsFragment"
+            app:destination="@id/myEventsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createEventFragment"
+            app:destination="@id/createEventFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.eventify.app.MyProfileFragment"
+        android:label="My Profile"
+        tools:layout="@layout/fragment_my_profile" />
+
+    <fragment
+        android:id="@+id/myEventsFragment"
+        android:name="com.eventify.app.MyEventsFragment"
+        android:label="My Events"
+        tools:layout="@layout/fragment_my_events" />
+
 
     <fragment
         android:id="@+id/costsFragment"
