@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/myEventsFragment"
-        android:name="com.eventify.app.MyEventsFragment"
+        android:name="com.eventify.app.ui.MyEventsFragment"
         android:label="My Events"
         tools:layout="@layout/fragment_my_events" />
 
@@ -64,9 +64,5 @@
         android:name="com.eventify.app.PostFeedFragment"
         android:label="fragment_post_feed"
         tools:layout="@layout/fragment_post_feed" />
-    <fragment
-        android:id="@+id/analyticsFragment"
-        android:name="com.eventify.app.AnalyticsFragment"
-        android:label="fragment_analytics"
-        tools:layout="@layout/fragment_analytics" />
+
 </navigation>

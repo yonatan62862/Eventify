@@ -11,34 +11,35 @@ import com.eventify.app.data.remote.EventRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
-class EventViewModel(application: Application) : AndroidViewModel(application) {
+class MyEventsViewModel(application: Application) : AndroidViewModel(application) {
     private val eventDao = AppDatabase.getDatabase(application).eventDao()
     private val repository = EventRepository(eventDao)
 
-    private val _eventsLiveData = MutableLiveData<List<EventEntity>>()
-    val eventsLiveData: LiveData<List<EventEntity>> = _eventsLiveData
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    fun insertEvent(event: EventEntity) {
-        viewModelScope.launch {
-            repository.insertEvent(event)
-            loadUserEvents()
-        }
+    val localEvents: LiveData<List<EventEntity>> = repository.getAllLocalEvents(userId)
+
+    private val _remoteEvents = MutableLiveData<List<EventEntity>>()
+    val remoteEvents: LiveData<List<EventEntity>> get() = _remoteEvents
+
+    init {
+        fetchUserEvents()
     }
 
-    fun loadUserEvents() {
+    fun fetchUserEvents() {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         viewModelScope.launch {
             val events = repository.getUserEvents()
-            _eventsLiveData.postValue(events)
+            _remoteEvents.postValue(events)
         }
     }
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             repository.deleteEvent(eventId)
-            loadUserEvents()
         }
     }
+
 
 
 }

@@ -1,4 +1,4 @@
-package com.eventify.app.data.local.models
+package com.eventify.app.data.local
 
 data class User(
     val id: String = "",
