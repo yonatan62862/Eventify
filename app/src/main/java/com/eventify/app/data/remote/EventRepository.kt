@@ -26,26 +26,30 @@ class EventRepository(private val eventDao: EventDao) {
         }
     }
 
+    fun createEvent(event: Event) {
+        val eventWithInvites = event.copy(invitedUsers = listOf("user1@example.com", "user2@example.com"))
+        eventsCollection.document(event.id).set(eventWithInvites)
+    }
 
-    suspend fun getUserEvents(): List<EventEntity> {
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return emptyList()
-
+    suspend fun getUserEvents(userEmail: String): List<EventEntity> {
         return withContext(Dispatchers.IO) {
-            val localEvents = eventDao.getUserEvents(userEmail)
+            val snapshot = eventsCollection
+                .whereArrayContains("invitedUsers", userEmail)
+                .get().await()
 
-            try {
-                val snapshot = eventsCollection.whereEqualTo("ownerId", userEmail).get().await()
-                val remoteEvents = snapshot.toObjects(Event::class.java)
+            val remoteEvents = snapshot.toObjects(Event::class.java)
 
-                eventDao.clearAllEvents()
-                remoteEvents.forEach { eventDao.insertEvent(it.toLocal()) }
+            val userOwnedEvents = eventsCollection.whereEqualTo("ownerId", userEmail).get().await()
+            val ownedEvents = userOwnedEvents.toObjects(Event::class.java)
 
-                return@withContext remoteEvents.map { it.toLocal() }
-            } catch (e: Exception) {
-                return@withContext localEvents
-            }
+            val allEvents = (remoteEvents + ownedEvents).map { it.toLocal() }
+
+            allEvents.forEach { eventDao.insertEvent(it) }
+
+            return@withContext allEvents
         }
     }
+
 
 
     fun getAllLocalEvents(userId: String): LiveData<List<EventEntity>> {

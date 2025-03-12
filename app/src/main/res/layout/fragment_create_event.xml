@@ -139,6 +139,24 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- 📌 שדה להזנת מייל וכפתור להזמנה -->
+        <EditText
+            android:id="@+id/emailInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter email to invite"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invite User"
+            android:backgroundTint="@color/black"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveEvent"
             android:layout_width="match_parent"

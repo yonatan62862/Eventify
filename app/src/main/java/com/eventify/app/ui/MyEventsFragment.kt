@@ -32,7 +32,8 @@ class MyEventsFragment : Fragment() {
 
         adapter = EventAdapter { eventId ->
             viewModel.deleteEvent(eventId)
-            Snackbar.make(view, "Event deleted", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, "Event deleted successfully", Snackbar.LENGTH_SHORT).show()
+            viewModel.fetchUserEvents()
         }
 
         recyclerView.adapter = adapter
@@ -42,15 +43,16 @@ class MyEventsFragment : Fragment() {
         viewModel.fetchUserEvents()
 
         viewModel.localEvents.observe(viewLifecycleOwner) { localEventList ->
-            val currentList = adapter.currentList.toMutableList()
-            currentList.addAll(localEventList)
-            adapter.submitList(currentList.distinctBy { it.id })
+            if (localEventList.isNotEmpty()) {
+                adapter.submitList(localEventList)
+            }
         }
 
         viewModel.remoteEvents.observe(viewLifecycleOwner) { remoteEventList ->
-            val currentList = adapter.currentList.toMutableList()
-            currentList.addAll(remoteEventList)
-            adapter.submitList(currentList.distinctBy { it.id })
+            if (remoteEventList.isNotEmpty()) {
+                adapter.submitList(remoteEventList)
+            }
         }
+
     }
 }

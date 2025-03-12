@@ -29,10 +29,15 @@ class MyEventsViewModel(application: Application) : AndroidViewModel(application
     fun fetchUserEvents() {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         viewModelScope.launch {
-            val events = repository.getUserEvents()
-            _remoteEvents.postValue(events)
+            val events = repository.getUserEvents(userEmail)
+            val currentList = _remoteEvents.value.orEmpty().toMutableList()
+            currentList.addAll(events)
+
+            _remoteEvents.postValue(currentList.distinctBy { it.id })
         }
     }
+
+
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {

@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.eventify.app.data.local.EventEntity
 import com.eventify.app.databinding.FragmentCreateEventBinding
 import com.eventify.app.ViewModel.EventViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -107,9 +108,12 @@ class CreateEventFragment : Fragment() {
         val endDate = binding.btnEndDate.text.toString()
         val endTime = binding.btnEndTime.text.toString()
         val eventType = binding.spinnerEventType.selectedItem.toString()
+        val ownerEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
+
+        val invitedEmails = binding.emailInput.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
 
         val eventId = UUID.randomUUID().toString()
-        val event = EventEntity(eventId, title, eventType, description, startDate, startTime, endDate, endTime, location, "user123")
+        val event = EventEntity(eventId, title, eventType, description, startDate, startTime, endDate, endTime, location, ownerEmail, invitedEmails)
 
         lifecycleScope.launch {
             try {
@@ -119,7 +123,6 @@ class CreateEventFragment : Fragment() {
                 binding.btnSaveEvent.isEnabled = true
 
                 Toast.makeText(requireContext(), "Event saved successfully!", Toast.LENGTH_SHORT).show()
-
                 findNavController().navigateUp()
 
             } catch (e: Exception) {
@@ -129,6 +132,7 @@ class CreateEventFragment : Fragment() {
             }
         }
     }
+
 
     private fun showDatePicker(button: Button) {
         val calendar = Calendar.getInstance()
