@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
 
-        // הגדרת NavController
         val navHostFragment: NavHostFragment? =
             supportFragmentManager.findFragmentById(R.id.main_nav_host) as? NavHostFragment
         navController = navHostFragment?.navController
@@ -54,14 +53,6 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_bar)
         navController?.let { NavigationUI.setupWithNavController(bottomNavigationView, it) }
-
-        // התנתקות המשתמש (Logout)
-        binding.logout.setOnClickListener {
-            auth.signOut() // Firebase sign-out
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish() // סוגר את MainActivity
-        }
 
     }
 
@@ -91,17 +82,3 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-//        // הגדרת Toolbar לשימוש עם NavController
-//        setSupportActionBar(binding.mainToolbar)
-//        val appBarConfiguration = AppBarConfiguration(navController.graph)
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-
-
-//        val db = Firebase.firestore
-
-
-
-
-//    override fun onSupportNavigateUp(): Boolean {
-//        return navController.navigateUp() || super.onSupportNavigateUp()
-//    }

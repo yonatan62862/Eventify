@@ -52,7 +52,7 @@
     <fragment
         android:id="@+id/createEventFragment"
         android:name="com.eventify.app.CreateEventFragment"
-        android:label="fragment_create_event"
+        android:label="New Event"
         tools:layout="@layout/fragment_create_event" />
     <fragment
         android:id="@+id/editEventFragment"
