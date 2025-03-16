@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.eventify.app.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -30,22 +31,42 @@ class RegisterActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // מעבר ל-MainActivity לאחר הרשמה מוצלחת
+                            val user = auth.currentUser
+                            user?.let {
+                                saveUserToFirestore(it.uid, it.email ?: "")
+                            }
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
-                            // טיפול בשגיאה
-                            binding.etEmail.error = "Registration failed"
+                            binding.etEmail.error = "Registration failed: ${task.exception?.message}"
                         }
                     }
             }
         }
 
+
         binding.loginNow.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun saveUserToFirestore(userId: String, email: String) {
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        val user = hashMapOf(
+            "name" to "New User",
+            "email" to email,
+            "profileImageUrl" to ""
+        )
+
+        userRef.set(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "User saved to Firestore", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to save user: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun validateInput(email: String, password: String, confirmPassword: String): Boolean {

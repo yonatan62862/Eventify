@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/myProfileFragment"
-        android:name="com.eventify.app.MyProfileFragment"
+        android:name="com.eventify.app.ui.MyProfileFragment"
         android:label="My Profile"
         tools:layout="@layout/fragment_my_profile" />
 

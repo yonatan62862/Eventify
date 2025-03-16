@@ -2,18 +2,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        tools:replace="android:fullBackupContent"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Eventify"
+        android:name=".MyApplication"
         tools:targetApi="31">
+
+
+        <meta-data
+            android:name="cloudinaryCloudName"
+            android:value="dhmjcych3" />
+        <meta-data
+            android:name="cloudinaryApiKey"
+            android:value="538911226192628" />
+        <meta-data
+            android:name="cloudinaryApiSecret"
+            android:value="uUZMNMo9MIUjJyNBvuvbjso1j4Y" />
+
         <activity
             android:name=".LauncherActivity"
             android:exported="true" >
