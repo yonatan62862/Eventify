@@ -1,4 +1,4 @@
-package com.eventify.app.ViewModel
+package com.eventify.app.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

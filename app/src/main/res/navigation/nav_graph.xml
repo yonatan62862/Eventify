@@ -19,6 +19,10 @@
         <action
             android:id="@+id/action_homeFragment_to_createEventFragment"
             app:destination="@id/createEventFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_apiEventFragment"
+            app:destination="@id/apiEventFragment" />
     </fragment>
 
     <fragment
@@ -33,6 +37,11 @@
         android:label="My Events"
         tools:layout="@layout/fragment_my_events" />
 
+    <fragment
+        android:id="@+id/apiEventFragment"
+        android:name="com.eventify.app.ui.ApiEventFragment"
+        android:label="Event Vendors"
+        tools:layout="@layout/fragment_api_event" />
 
     <fragment
         android:id="@+id/costsFragment"

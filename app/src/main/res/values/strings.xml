@@ -12,4 +12,5 @@
     <string name="click_to_register">click to register</string>
     <string name="logout">Logout</string>
     <string name="create_event">Create Event</string>
+    <string name="event_image">Event Image</string>
 </resources>

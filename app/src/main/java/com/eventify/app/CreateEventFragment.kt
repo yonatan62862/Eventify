@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.eventify.app.data.local.EventEntity
 import com.eventify.app.databinding.FragmentCreateEventBinding
-import com.eventify.app.ViewModel.EventViewModel
+import com.eventify.app.viewmodel.EventViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.*

@@ -35,5 +35,9 @@ class HomeFragment : Fragment() {
         view.findViewById<Button>(R.id.btnCreateEvent).setOnClickListener {
             navController.navigate(R.id.action_homeFragment_to_createEventFragment)
         }
+
+        view.findViewById<Button>(R.id.btnViewApiEvents).setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_apiEventFragment)
+        }
     }
 }

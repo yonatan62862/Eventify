@@ -54,7 +54,31 @@
             app:cornerRadius="16dp"
             android:layout_margin="8dp"/>
 
+        <!-- כפתור Find Vendors -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApiEvents"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:text="Find Vendors"
+            android:backgroundTint="#FF3B3B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"
+            android:layout_margin="8dp"/>
+
+        <!-- כפתור View API Events (חדש) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewApiEvents"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:text="View API Events"
+            android:backgroundTint="#FF3B3B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"
+            android:layout_margin="8dp"/>
     </GridLayout>
+
 
     <!-- כפתור Create Event -->
     <com.google.android.material.button.MaterialButton

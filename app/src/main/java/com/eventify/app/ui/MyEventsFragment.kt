@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eventify.app.R
 import com.eventify.app.adapters.EventAdapter
-import com.eventify.app.ViewModel.MyEventsViewModel
+import com.eventify.app.viewmodel.MyEventsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.snackbar.Snackbar
 

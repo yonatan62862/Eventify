@@ -127,7 +127,7 @@ class MyProfileFragment : Fragment() {
             val imageUri = data.data
             if (imageUri != null) {
                 profileImageView.setImageURI(imageUri)
-                uploadImageToCloudinary(imageUri)  // מעלה את התמונה ל-Cloudinary
+                uploadImageToCloudinary(imageUri)
             } else {
                 Toast.makeText(requireContext(), "Failed to get image", Toast.LENGTH_SHORT).show()
             }
