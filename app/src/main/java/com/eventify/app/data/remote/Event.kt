@@ -13,10 +13,11 @@ data class Event(
     val endTime: String = "",
     val location: String = "",
     val ownerId: String = "",
-    val invitedUsers: List<String> = listOf()
+    val invitedUsers: List<String> = listOf(),
+    val imageUrl: String? = null
 
 ) {
     fun toLocal(): EventEntity {
-        return EventEntity(id, name, eventType, description, startDate, startTime, endDate, endTime, location, ownerId, invitedUsers)
+        return EventEntity(id, name, eventType, description, startDate, startTime, endDate, endTime, location, ownerId, invitedUsers, imageUrl)
     }
 }

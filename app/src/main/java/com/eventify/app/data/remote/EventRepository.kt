@@ -22,14 +22,18 @@ class EventRepository(private val eventDao: EventDao) {
 
         CoroutineScope(Dispatchers.IO).launch {
             eventDao.insertEvent(eventWithEmail)
-            eventsCollection.document(eventWithEmail.id).set(eventWithEmail)
+            Log.d("EventRepository", "Inserted event to ROOM: ${eventWithEmail.name}, ${eventWithEmail.startDate}")
+
+            eventsCollection.document(eventWithEmail.id).set(eventWithEmail).addOnSuccessListener {
+                Log.d("EventRepository", "Event saved to Firestore: ${eventWithEmail.name}")
+            }.addOnFailureListener { e ->
+                Log.e("EventRepository", "Failed to save event to Firestore", e)
+            }
         }
     }
 
-    fun createEvent(event: Event) {
-        val eventWithInvites = event.copy(invitedUsers = listOf("user1@example.com", "user2@example.com"))
-        eventsCollection.document(event.id).set(eventWithInvites)
-    }
+
+
 
     suspend fun getUserEvents(userEmail: String): List<EventEntity> {
         return withContext(Dispatchers.IO) {
@@ -44,11 +48,15 @@ class EventRepository(private val eventDao: EventDao) {
 
             val allEvents = (remoteEvents + ownedEvents).map { it.toLocal() }
 
+            Log.d("EventRepository", "Fetched ${allEvents.size} events from Firestore")
+            allEvents.forEach { Log.d("EventRepository", "Event: ${it.name}, ${it.startDate}") }
+
             allEvents.forEach { eventDao.insertEvent(it) }
 
             return@withContext allEvents
         }
     }
+
 
 
 

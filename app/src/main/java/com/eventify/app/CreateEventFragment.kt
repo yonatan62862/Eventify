@@ -2,6 +2,7 @@ package com.eventify.app
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +10,15 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.eventify.app.data.local.EventEntity
 import com.eventify.app.databinding.FragmentCreateEventBinding
-import com.eventify.app.viewmodel.EventViewModel
+import com.eventify.app.network.CloudinaryUploader
+import com.eventify.app.viewmodel.MyEventsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.*
@@ -23,12 +26,23 @@ import java.util.*
 class CreateEventFragment : Fragment() {
 
     private lateinit var binding: FragmentCreateEventBinding
-    private lateinit var eventViewModel: EventViewModel
+    private lateinit var eventViewModel: MyEventsViewModel
     private val eventTypes = arrayOf("Wedding", "Birthday", "Party", "Company Event")
+
+    private var selectedImageUri: Uri? = null
+
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            selectedImageUri = it
+            binding.eventImageView.setImageURI(it)
+            binding.eventImageView.visibility = View.VISIBLE
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCreateEventBinding.inflate(inflater, container, false)
-        eventViewModel = ViewModelProvider(this).get(EventViewModel::class.java)
+        eventViewModel = ViewModelProvider(this).get(MyEventsViewModel::class.java)
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, eventTypes)
         binding.spinnerEventType.adapter = adapter
@@ -37,6 +51,7 @@ class CreateEventFragment : Fragment() {
         binding.btnStartTime.setOnClickListener { showTimePicker(binding.btnStartTime) }
         binding.btnEndDate.setOnClickListener { showDatePicker(binding.btnEndDate) }
         binding.btnEndTime.setOnClickListener { showTimePicker(binding.btnEndTime) }
+        binding.btnSelectImage.setOnClickListener { pickImageLauncher.launch("image/*") }
 
         binding.btnSaveEvent.setOnClickListener {
             saveEvent()
@@ -110,12 +125,19 @@ class CreateEventFragment : Fragment() {
         val eventType = binding.spinnerEventType.selectedItem.toString()
         val ownerEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
 
-        val invitedEmails = binding.emailInput.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            val invitedEmails = binding.emailInput.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
 
         val eventId = UUID.randomUUID().toString()
         val event = EventEntity(eventId, title, eventType, description, startDate, startTime, endDate, endTime, location, ownerEmail, invitedEmails)
 
         lifecycleScope.launch {
+            val imageUrl = selectedImageUri?.let { CloudinaryUploader(requireContext()).uploadImage(it) } ?: ""
+
+            val event = EventEntity(
+                UUID.randomUUID().toString(),
+                title, eventType, description, startDate, startTime, endDate, endTime,
+                location, ownerEmail, invitedEmails, imageUrl
+            )
             try {
                 eventViewModel.insertEvent(event)
 

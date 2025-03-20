@@ -10,18 +10,26 @@
     android:padding="16dp"
     tools:context=".ui.HomeFragment">
 
-    <!-- כותרת -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Eventify"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
+        android:textColor="#D32F2F"
+        android:fontFamily="sans-serif-medium"
+        android:shadowColor="#880000"
+        android:shadowRadius="4"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:letterSpacing="0.05"
+        android:padding="8dp"
         android:layout_marginBottom="24dp"
-        android:textColor="@android:color/black"/>
+        />
 
-    <!-- Grid Layout עבור הכפתורים -->
+
+
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +38,6 @@
         android:layout_marginBottom="16dp"
         android:layout_gravity="center">
 
-        <!-- כפתור My Profile -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnMyProfile"
             style="@style/Widget.MaterialComponents.Button"
@@ -42,7 +49,6 @@
             app:cornerRadius="16dp"
             android:layout_margin="8dp"/>
 
-        <!-- כפתור My Events -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnMyEvents"
             style="@style/Widget.MaterialComponents.Button"
@@ -54,19 +60,7 @@
             app:cornerRadius="16dp"
             android:layout_margin="8dp"/>
 
-        <!-- כפתור Find Vendors -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnApiEvents"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="140dp"
-            android:layout_height="120dp"
-            android:text="Find Vendors"
-            android:backgroundTint="#FF3B3B"
-            android:textColor="@android:color/white"
-            app:cornerRadius="16dp"
-            android:layout_margin="8dp"/>
 
-        <!-- כפתור View API Events (חדש) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnViewApiEvents"
             style="@style/Widget.MaterialComponents.Button"
@@ -80,7 +74,6 @@
     </GridLayout>
 
 
-    <!-- כפתור Create Event -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCreateEvent"
         style="@style/Widget.MaterialComponents.Button"

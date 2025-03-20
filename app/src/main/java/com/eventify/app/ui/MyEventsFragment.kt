@@ -1,6 +1,8 @@
 package com.eventify.app.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.eventify.app.EditEventFragment
 import com.eventify.app.R
 import com.eventify.app.adapters.EventAdapter
 import com.eventify.app.viewmodel.MyEventsViewModel
@@ -30,17 +33,26 @@ class MyEventsFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewMyEvents)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        adapter = EventAdapter { eventId ->
-            viewModel.deleteEvent(eventId)
-            Snackbar.make(view, "Event deleted successfully", Snackbar.LENGTH_SHORT).show()
-            viewModel.fetchUserEvents()
-        }
+        adapter = EventAdapter(
+            onDeleteClick = { eventId ->
+                viewModel.deleteEvent(eventId)
+                Snackbar.make(view, "Event deleted successfully", Snackbar.LENGTH_SHORT).show()
+                viewModel.loadUserEvents()
+            },
+            onEditClick = { event ->
+                val intent = Intent(context, EditEventFragment::class.java).apply {
+                    putExtra("event_id", event.id)
+                }
+                startActivity(intent)
+            }
+        )
+
 
         recyclerView.adapter = adapter
 
         val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
 
-        viewModel.fetchUserEvents()
+        viewModel.loadUserEvents()
 
         viewModel.localEvents.observe(viewLifecycleOwner) { localEventList ->
             if (localEventList.isNotEmpty()) {
@@ -53,6 +65,18 @@ class MyEventsFragment : Fragment() {
                 adapter.submitList(remoteEventList)
             }
         }
+
+        viewModel.allEvents.observe(viewLifecycleOwner) { eventList ->
+            Log.d("MyEventsFragment", "Received ${eventList.size} events from ViewModel")
+            eventList.forEach { Log.d("MyEventsFragment", "Event in list: ${it.name}, ${it.startDate}") }
+
+            if (eventList.isNotEmpty()) {
+                adapter.submitList(eventList)
+            } else {
+                Log.d("MyEventsFragment", "No events found")
+            }
+        }
+
 
     }
 }

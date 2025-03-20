@@ -1,6 +1,7 @@
 package com.eventify.app.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,34 +18,45 @@ class MyEventsViewModel(application: Application) : AndroidViewModel(application
 
     private val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+    // Local events from database
     val localEvents: LiveData<List<EventEntity>> = repository.getAllLocalEvents(userId)
 
+    // Remote events
     private val _remoteEvents = MutableLiveData<List<EventEntity>>()
     val remoteEvents: LiveData<List<EventEntity>> get() = _remoteEvents
 
+    // All events
+    private val _allEvents = MutableLiveData<List<EventEntity>>()
+    val allEvents: LiveData<List<EventEntity>> = _allEvents
+
     init {
-        fetchUserEvents()
+        loadUserEvents()
     }
 
-    fun fetchUserEvents() {
+    fun loadUserEvents() {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         viewModelScope.launch {
             val events = repository.getUserEvents(userEmail)
-            val currentList = _remoteEvents.value.orEmpty().toMutableList()
-            currentList.addAll(events)
+            _allEvents.postValue(events)
 
-            _remoteEvents.postValue(currentList.distinctBy { it.id })
+            // הדפסת האירועים המקומיים בלוג
+            events.forEach {
+                Log.d("MyEventsViewModel", "Loaded event from ROOM: ${it.name}, ${it.startDate}")
+            }
         }
     }
 
-
+    fun insertEvent(event: EventEntity) {
+        viewModelScope.launch {
+            repository.insertEvent(event)
+            loadUserEvents()
+        }
+    }
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             repository.deleteEvent(eventId)
+            loadUserEvents()
         }
     }
-
-
-
 }

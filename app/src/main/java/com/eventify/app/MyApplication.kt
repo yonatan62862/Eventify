@@ -1,11 +1,14 @@
 package com.eventify.app
 
 import android.app.Application
-import com.eventify.app.utils.CloudinaryManager
+import android.util.Log
 
 class MyApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
-        CloudinaryManager.init(this)
+
+        Log.d("MyApplication", "Application started!")
+
     }
 }
