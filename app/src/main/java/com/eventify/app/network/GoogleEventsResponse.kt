@@ -6,11 +6,19 @@ data class GoogleEventsResponse(
 
 
 data class GoogleEvent(
-    val summary: String,
+    val id: String,
+    val summary: String?,
+    val location: String?,
     val start: EventDateTime,
-    val end: EventDateTime?,
+    val end: EventDateTime,
     val htmlLink: String?,
-    val location: String?
+    val attachments: List<GoogleEventAttachment>?
+)
+
+data class GoogleEventAttachment(
+    val fileId: String?,
+    val fileUrl: String?,
+    val title: String?
 )
 
 data class EventDateTime(

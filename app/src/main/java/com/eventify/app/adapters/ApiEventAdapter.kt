@@ -5,10 +5,12 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.eventify.app.R
 import com.eventify.app.network.GoogleEvent
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,34 +22,54 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
         val date: TextView = view.findViewById(R.id.eventDate)
         val time: TextView = view.findViewById(R.id.eventTime)
         val location: TextView = view.findViewById(R.id.eventLocation)
+        val eventImage: ImageView = view.findViewById(R.id.eventIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_api_event, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
 
+        // כותרת האירוע
         holder.title.text = event.summary
 
+        // תאריך האירוע
         holder.date.text = when {
-            event.start.dateTime != null -> formatDate(event.start.dateTime)
-            event.start.date != null -> "${formatDate(event.start.date)} (All Day)"
-            else -> "תאריך לא ידוע"
+            event.start.dateTime != null -> "📅 " + formatDate(event.start.dateTime)
+            event.start.date != null -> "📅 " + formatDate(event.start.date) + " (All Day)"
+            else -> "📅 תאריך לא ידוע"
         }
 
         holder.time.text = when {
             event.start.dateTime != null && event.end?.dateTime != null -> {
-                "${formatTime(event.start.dateTime)} - ${formatTime(event.end.dateTime)}"
+                "⏰ ${formatTime(event.start.dateTime)} - ${formatTime(event.end.dateTime)}"
             }
-            event.start.date != null -> "08:00 - 23:59"
-            else -> "שעה לא זמינה"
+            event.start.dateTime != null -> {
+                "⏰ ${formatTime(event.start.dateTime)}"
+            }
+            event.start.date != null -> "⏰ All Day"
+            else -> "⏰ שעה לא זמינה"
         }
 
-        holder.location.text = event.location ?: "מיקום לא ידוע"
+        // מיקום האירוע
+        holder.location.text = event.location?.let { "📍 $it" } ?: "📍New York"
 
+        // טעינת תמונה (אם קיימת תמונה)
+        val imageUrl = event.attachments?.firstOrNull()?.fileUrl ?: "" // בדיקת תמונה ראשונה אם קיימת
+        if (imageUrl.isNotEmpty()) {
+            Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.error_image) // תמונת טעינה זמנית
+                .error(R.drawable.error_image) // אם התמונה לא קיימת
+                .into(holder.eventImage)
+        } else {
+            holder.eventImage.setImageResource(R.drawable.ic_calendar) // תמונת ברירת מחדל
+        }
+
+        // כאשר לוחצים על אירוע -> פותח את הדף שלו בדפדפן
         holder.itemView.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = android.net.Uri.parse(event.htmlLink)
@@ -59,13 +81,20 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
 
     private fun formatDate(date: String): String {
         return try {
-            if (date.length == 10) {
+            if (date.length == 10) { // אם הפורמט הוא YYYY-MM-DD
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val parsedDate = inputFormat.parse(date)
                 outputFormat.format(parsedDate!!)
-            } else {
-                date
+            } else { // אם הפורמט מכיל גם שעה
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+                inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+                val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                outputFormat.timeZone = TimeZone.getDefault()
+
+                val parsedDate = inputFormat.parse(date)
+                outputFormat.format(parsedDate!!)
             }
         } catch (e: Exception) {
             "תאריך לא ידוע"
@@ -73,8 +102,6 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
     }
 
     private fun formatTime(dateTime: String): String {
-        if (dateTime.isNullOrEmpty()) return "שעה לא זמינה"
-
         return try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             inputFormat.timeZone = TimeZone.getTimeZone("UTC")

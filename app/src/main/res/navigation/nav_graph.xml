@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/apiEventFragment"
         android:name="com.eventify.app.ui.ApiEventFragment"
-        android:label="Event Vendors"
+        android:label="GOOGLE - REST API"
         tools:layout="@layout/fragment_api_event" />
 
     <fragment
