@@ -18,11 +18,13 @@ data class EventEntity(
     val location: String,
     val ownerId: String,
 
+
     @TypeConverters(Converters::class)
     val invitedUsers: List<String>,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
+
 ) {
     fun toRemote(): Event {
-        return Event(id, name, eventType, description, startDate, startTime, endDate, endTime, location, ownerId, invitedUsers, imageUrl)
+        return Event(id, name, eventType, description, startDate, startTime, endDate, endTime, location, ownerId, invitedUsers, imageUrl,)
     }
 }

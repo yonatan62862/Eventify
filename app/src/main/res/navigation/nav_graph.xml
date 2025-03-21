@@ -34,8 +34,12 @@
     <fragment
         android:id="@+id/myEventsFragment"
         android:name="com.eventify.app.ui.MyEventsFragment"
-        android:label="My Events"
-        tools:layout="@layout/fragment_my_events" />
+        android:label="My Events">
+
+        <action
+            android:id="@+id/action_myEventsFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/apiEventFragment"
@@ -43,11 +47,6 @@
         android:label="GOOGLE - REST API"
         tools:layout="@layout/fragment_api_event" />
 
-    <fragment
-        android:id="@+id/costsFragment"
-        android:name="com.eventify.app.CostsFragment"
-        android:label="Costs Calculator"
-        tools:layout="@layout/fragment_costs" />
     <fragment
         android:id="@+id/eventUpdatesFragment"
         android:name="com.eventify.app.EventUpdatesFragment"
@@ -60,18 +59,14 @@
         tools:layout="@layout/fragment_guest_list" />
     <fragment
         android:id="@+id/createEventFragment"
-        android:name="com.eventify.app.CreateEventFragment"
+        android:name="com.eventify.app.ui.CreateEventFragment"
         android:label="New Event"
         tools:layout="@layout/fragment_create_event" />
     <fragment
         android:id="@+id/editEventFragment"
-        android:name="com.eventify.app.EditEventFragment"
-        android:label="fragment_edit_event"
+        android:name="com.eventify.app.ui.EditEventFragment"
+        android:label="Edit Event"
         tools:layout="@layout/fragment_edit_event" />
-    <fragment
-        android:id="@+id/postFeedFragment"
-        android:name="com.eventify.app.PostFeedFragment"
-        android:label="fragment_post_feed"
-        tools:layout="@layout/fragment_post_feed" />
+
 
 </navigation>

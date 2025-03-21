@@ -34,17 +34,16 @@ class MyEventsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun loadUserEvents() {
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         viewModelScope.launch {
-            val events = repository.getUserEvents(userEmail)
-            _allEvents.postValue(events)
+            val localEventsList = repository.getAllLocalEvents(userId).value ?: emptyList()
+            val remoteEventsList = repository.getUserEvents()
 
-            // הדפסת האירועים המקומיים בלוג
-            events.forEach {
-                Log.d("MyEventsViewModel", "Loaded event from ROOM: ${it.name}, ${it.startDate}")
-            }
+            val mergedEvents = (localEventsList + remoteEventsList).distinctBy { it.id }
+
+            _allEvents.postValue(mergedEvents)
         }
     }
+
 
     fun insertEvent(event: EventEntity) {
         viewModelScope.launch {

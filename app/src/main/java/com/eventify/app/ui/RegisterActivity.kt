@@ -1,7 +1,8 @@
-package com.eventify.app
+package com.eventify.app.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
@@ -35,13 +36,13 @@ class RegisterActivity : AppCompatActivity() {
                             user?.let {
                                 saveUserToFirestore(it.uid, it.email ?: "")
                             }
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
+                            startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         } else {
                             binding.etEmail.error = "Registration failed: ${task.exception?.message}"
                         }
                     }
+
             }
         }
 
@@ -53,21 +54,26 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun saveUserToFirestore(userId: String, email: String) {
-        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(userId)
+
         val user = hashMapOf(
-            "name" to "New User",
+            "uid" to userId,
             "email" to email,
-            "profileImageUrl" to ""
+            "name" to "New User",
+            "profileImageUrl" to "",
+            "createdAt" to System.currentTimeMillis()
         )
 
         userRef.set(user)
             .addOnSuccessListener {
-                Toast.makeText(this, "User saved to Firestore", Toast.LENGTH_SHORT).show()
+                Log.d("Firestore", "User saved successfully: $email")
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to save user: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("Firestore", "Failed to save user: ${e.message}")
             }
     }
+
 
     private fun validateInput(email: String, password: String, confirmPassword: String): Boolean {
         if (email.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.eventify.app
+package com.eventify.app.ui
 
 import android.content.Intent
 import android.os.Bundle

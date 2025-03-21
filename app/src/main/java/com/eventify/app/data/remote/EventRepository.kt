@@ -12,55 +12,62 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class EventRepository(private val eventDao: EventDao) {
-    private val db = FirebaseFirestore.getInstance()
-    private val eventsCollection = db.collection("events")
 
-    fun insertEvent(event: EventEntity) {
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
-        val eventWithEmail = event.copy(ownerId = userEmail)
+    class EventRepository(private val eventDao: EventDao) {
+        private val db = FirebaseFirestore.getInstance()
+        private val eventsCollection = db.collection("events")
 
-        CoroutineScope(Dispatchers.IO).launch {
-            eventDao.insertEvent(eventWithEmail)
-            Log.d("EventRepository", "Inserted event to ROOM: ${eventWithEmail.name}, ${eventWithEmail.startDate}")
+        fun insertEvent(event: EventEntity) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
+            val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
 
-            eventsCollection.document(eventWithEmail.id).set(eventWithEmail).addOnSuccessListener {
-                Log.d("EventRepository", "Event saved to Firestore: ${eventWithEmail.name}")
-            }.addOnFailureListener { e ->
-                Log.e("EventRepository", "Failed to save event to Firestore", e)
+            val eventWithDetails = event.copy(ownerId = userId, invitedUsers = event.invitedUsers)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                eventDao.insertEvent(eventWithDetails)
+
+                Log.d("EventRepository", "Saving event with owner: $userEmail and invited users: ${eventWithDetails.invitedUsers}")
+
+                eventsCollection.document(eventWithDetails.id).set(eventWithDetails)
+                    .addOnSuccessListener {
+                        Log.d("EventRepository", "Event saved successfully with invited users: ${eventWithDetails.invitedUsers}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("EventRepository", "Failed to save event to Firestore", e)
+                    }
             }
         }
-    }
 
 
 
 
-    suspend fun getUserEvents(userEmail: String): List<EventEntity> {
-        return withContext(Dispatchers.IO) {
-            val snapshot = eventsCollection
-                .whereArrayContains("invitedUsers", userEmail)
-                .get().await()
+        suspend fun getUserEvents(): List<EventEntity> {
+            return withContext(Dispatchers.IO) {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@withContext emptyList()
 
-            val remoteEvents = snapshot.toObjects(Event::class.java)
+                val ownedEventsSnapshot = eventsCollection.whereEqualTo("ownerId", userId).get().await()
+                val ownedEvents = ownedEventsSnapshot.toObjects(Event::class.java)
 
-            val userOwnedEvents = eventsCollection.whereEqualTo("ownerId", userEmail).get().await()
-            val ownedEvents = userOwnedEvents.toObjects(Event::class.java)
+                val invitedEventsSnapshot = eventsCollection.whereArrayContains("invitedUsers", userId).get().await()
+                val invitedEvents = invitedEventsSnapshot.toObjects(Event::class.java)
 
-            val allEvents = (remoteEvents + ownedEvents).map { it.toLocal() }
+                val allEvents = (ownedEvents + invitedEvents).map { it.toLocal() }
 
-            Log.d("EventRepository", "Fetched ${allEvents.size} events from Firestore")
-            allEvents.forEach { Log.d("EventRepository", "Event: ${it.name}, ${it.startDate}") }
+                Log.d("EventRepository", "Fetched ${allEvents.size} events from Firestore")
 
-            allEvents.forEach { eventDao.insertEvent(it) }
+                allEvents.forEach { eventDao.insertEvent(it) }
 
-            return@withContext allEvents
+                return@withContext allEvents
+            }
         }
-    }
 
 
 
 
-    fun getAllLocalEvents(userId: String): LiveData<List<EventEntity>> {
+
+
+
+        fun getAllLocalEvents(userId: String): LiveData<List<EventEntity>> {
         return eventDao.getUserEventsLiveData(userId)
     }
 

@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.eventify.app.EditEventFragment
 import com.eventify.app.R
 import com.eventify.app.adapters.EventAdapter
 import com.eventify.app.viewmodel.MyEventsViewModel
@@ -40,11 +40,13 @@ class MyEventsFragment : Fragment() {
                 viewModel.loadUserEvents()
             },
             onEditClick = { event ->
-                val intent = Intent(context, EditEventFragment::class.java).apply {
-                    putExtra("event_id", event.id)
-                }
-                startActivity(intent)
+                val navController = findNavController()
+                val bundle = Bundle()
+                bundle.putString("event_id", event.id)
+                navController.navigate(R.id.action_myEventsFragment_to_editEventFragment, bundle)
+
             }
+
         )
 
 
@@ -54,21 +56,20 @@ class MyEventsFragment : Fragment() {
 
         viewModel.loadUserEvents()
 
-        viewModel.localEvents.observe(viewLifecycleOwner) { localEventList ->
-            if (localEventList.isNotEmpty()) {
-                adapter.submitList(localEventList)
-            }
-        }
-
-        viewModel.remoteEvents.observe(viewLifecycleOwner) { remoteEventList ->
-            if (remoteEventList.isNotEmpty()) {
-                adapter.submitList(remoteEventList)
-            }
-        }
+//        viewModel.localEvents.observe(viewLifecycleOwner) { localEventList ->
+//            if (localEventList.isNotEmpty()) {
+//                adapter.submitList(localEventList)
+//            }
+//        }
+//
+//        viewModel.remoteEvents.observe(viewLifecycleOwner) { remoteEventList ->
+//            if (remoteEventList.isNotEmpty()) {
+//                adapter.submitList(remoteEventList)
+//            }
+//        }
 
         viewModel.allEvents.observe(viewLifecycleOwner) { eventList ->
             Log.d("MyEventsFragment", "Received ${eventList.size} events from ViewModel")
-            eventList.forEach { Log.d("MyEventsFragment", "Event in list: ${it.name}, ${it.startDate}") }
 
             if (eventList.isNotEmpty()) {
                 adapter.submitList(eventList)
@@ -76,6 +77,7 @@ class MyEventsFragment : Fragment() {
                 Log.d("MyEventsFragment", "No events found")
             }
         }
+
 
 
     }

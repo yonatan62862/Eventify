@@ -1,4 +1,4 @@
-package com.eventify.app
+package com.eventify.app.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -7,18 +7,14 @@ import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import com.eventify.app.databinding.ActivityMainBinding
-import androidx.navigation.ui.AppBarConfiguration
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.eventify.app.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
+        FirebaseFirestore.getInstance().clearPersistence()
+
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()

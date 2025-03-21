@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Eventify"
-        android:textSize="28sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="#D32F2F"
         android:fontFamily="sans-serif-medium"
@@ -25,10 +25,7 @@
         android:shadowDy="2"
         android:letterSpacing="0.05"
         android:padding="8dp"
-        android:layout_marginBottom="24dp"
-        />
-
-
+        android:layout_marginBottom="24dp" />
 
     <GridLayout
         android:layout_width="wrap_content"
@@ -60,7 +57,6 @@
             app:cornerRadius="16dp"
             android:layout_margin="8dp"/>
 
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnViewApiEvents"
             style="@style/Widget.MaterialComponents.Button"
@@ -71,23 +67,19 @@
             android:textColor="@android:color/white"
             app:cornerRadius="16dp"
             android:layout_margin="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCreateEvent"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="140dp"
+            android:layout_height="120dp"
+            android:text="Create Event"
+            android:backgroundTint="#FF3B3B"
+            android:textColor="@android:color/white"
+            app:cornerRadius="16dp"
+            android:layout_margin="8dp"
+            app:icon="@drawable/ic_add"
+            app:iconTint="@android:color/white"
+            app:iconPadding="8dp"/>
     </GridLayout>
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCreateEvent"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
-        android:text="Create Event"
-        android:backgroundTint="#FF3B3B"
-        android:textColor="@android:color/white"
-        app:cornerRadius="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        app:icon="@drawable/ic_add"
-        app:iconTint="@android:color/white"
-        app:iconPadding="12dp"
-        android:textSize="18sp"/>
 </LinearLayout>

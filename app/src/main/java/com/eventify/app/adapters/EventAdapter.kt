@@ -1,5 +1,6 @@
 package com.eventify.app.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.eventify.app.R
 import com.eventify.app.data.local.EventEntity
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -31,7 +33,6 @@ class EventAdapter(
             val editButton = itemView.findViewById<Button>(R.id.btnEditEvent)
 
             titleTextView.text = event.name
-
             dateTextView.text = "📅 Date: ${formatDate(event.startDate)}"
             timeTextView.text = "⏰ Time: ${formatTime(event.startTime)}"
             locationTextView.text = "📍 Location: ${event.location}"
@@ -51,8 +52,14 @@ class EventAdapter(
                 onDeleteClick(event.id)
             }
 
-            editButton.setOnClickListener {
-                onEditClick(event)
+            // 🔹 הוסף כאן את הבדיקה של ה-UID
+            Log.d("EventAdapter", "Event Owner ID: ${event.ownerId}, Current User ID: ${FirebaseAuth.getInstance().currentUser?.uid}")
+
+            if (event.ownerId == FirebaseAuth.getInstance().currentUser?.uid) {
+                editButton.visibility = View.VISIBLE
+                editButton.setOnClickListener { onEditClick(event) }
+            } else {
+                editButton.visibility = View.GONE
             }
         }
 

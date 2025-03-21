@@ -1,9 +1,10 @@
-package com.eventify.app
+package com.eventify.app.ui
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,9 @@ import com.eventify.app.databinding.FragmentCreateEventBinding
 import com.eventify.app.network.CloudinaryUploader
 import com.eventify.app.viewmodel.MyEventsViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -109,6 +113,27 @@ class CreateEventFragment : Fragment() {
         return isValid
     }
 
+    private fun fetchUserIdsFromEmails(emails: List<String>, callback: (List<String>) -> Unit) {
+        if (emails.isEmpty()) {
+            callback(emptyList())
+            return
+        }
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users")
+            .whereIn("email", emails) // מבצע חיפוש במכה אחת
+            .get()
+            .addOnSuccessListener { documents ->
+                val invitedUserIds = documents.map { it.id }
+                callback(invitedUserIds)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Failed to fetch user IDs", e)
+                callback(emptyList())
+            }
+    }
+
+
     private fun saveEvent() {
         if (!validateInputs()) return
 
@@ -123,36 +148,70 @@ class CreateEventFragment : Fragment() {
         val endDate = binding.btnEndDate.text.toString()
         val endTime = binding.btnEndTime.text.toString()
         val eventType = binding.spinnerEventType.selectedItem.toString()
-        val ownerEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
+        val ownerId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
 
-            val invitedEmails = binding.emailInput.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        val invitedEmails = binding.emailInput.text.toString()
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
 
-        val eventId = UUID.randomUUID().toString()
-        val event = EventEntity(eventId, title, eventType, description, startDate, startTime, endDate, endTime, location, ownerEmail, invitedEmails)
+        fetchUserIdsFromEmails(invitedEmails) { invitedUserIds ->
+            lifecycleScope.launch {
+                try {
+                    // העלאת תמונה ויצירת אובייקט האירוע במקביל
+                    val imageUploadDeferred = async(Dispatchers.IO) { uploadImageToCloudinary() }
+                    val imageUrl = imageUploadDeferred.await()
 
-        lifecycleScope.launch {
-            val imageUrl = selectedImageUri?.let { CloudinaryUploader(requireContext()).uploadImage(it) } ?: ""
+                    Log.d("CreateEventFragment", "Image uploaded: $imageUrl")
 
-            val event = EventEntity(
-                UUID.randomUUID().toString(),
-                title, eventType, description, startDate, startTime, endDate, endTime,
-                location, ownerEmail, invitedEmails, imageUrl
-            )
-            try {
-                eventViewModel.insertEvent(event)
+                    val event = EventEntity(
+                        id = UUID.randomUUID().toString(),
+                        name = title,
+                        eventType = eventType,
+                        description = description,
+                        startDate = startDate,
+                        startTime = startTime,
+                        endDate = endDate,
+                        endTime = endTime,
+                        location = location,
+                        ownerId = ownerId,
+                        invitedUsers = invitedUserIds,
+                        imageUrl = imageUrl
+                    )
 
-                binding.progressBar.visibility = View.GONE
-                binding.btnSaveEvent.isEnabled = true
+                    // שמירת האירוע במסד הנתונים (Firestore ו-Room) במקביל
+                    val roomSaveDeferred = async { eventViewModel.insertEvent(event) }
+                    val firestoreSaveDeferred = async { saveEventToFirestore(event) }
 
-                Toast.makeText(requireContext(), "Event saved successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
+                    roomSaveDeferred.await()
+                    firestoreSaveDeferred.await()
 
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Failed to save event", Toast.LENGTH_SHORT).show()
-                binding.progressBar.visibility = View.GONE
-                binding.btnSaveEvent.isEnabled = true
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSaveEvent.isEnabled = true
+
+                    Toast.makeText(requireContext(), "Event saved successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                } catch (e: Exception) {
+                    Log.e("CreateEventFragment", "Error saving event", e)
+                    Toast.makeText(requireContext(), "Failed to save event", Toast.LENGTH_SHORT).show()
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSaveEvent.isEnabled = true
+                }
             }
         }
+    }
+
+    private suspend fun saveEventToFirestore(event: EventEntity) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("events")
+            .document(event.id)
+            .set(event)
+            .addOnSuccessListener {
+                Log.d("CreateEventFragment", "Event saved to Firestore successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("CreateEventFragment", "Failed to save event to Firestore", e)
+            }
     }
 
 
@@ -179,5 +238,12 @@ class CreateEventFragment : Fragment() {
         }, hour, minute, true)
 
         timePicker.show()
+    }
+
+    private suspend fun uploadImageToCloudinary(): String {
+        return selectedImageUri?.let {
+            Log.d("CreateEventFragment", "Uploading image to Cloudinary...")
+            return@let CloudinaryUploader(requireContext()).uploadImage(it)
+        } ?: ""
     }
 }
