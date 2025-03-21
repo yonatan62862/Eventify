@@ -48,7 +48,7 @@ class MyProfileFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         profileImageView = binding.profileImageView
-        cloudinaryUploader = CloudinaryUploader(requireContext()) // אתחול מנהל ההעלאות
+        cloudinaryUploader = CloudinaryUploader(requireContext())
 
         val user = auth.currentUser
         user?.let {

@@ -33,10 +33,8 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
 
-        // כותרת האירוע
         holder.title.text = event.summary
 
-        // תאריך האירוע
         holder.date.text = when {
             event.start.dateTime != null -> "📅 " + formatDate(event.start.dateTime)
             event.start.date != null -> "📅 " + formatDate(event.start.date) + " (All Day)"
@@ -54,22 +52,19 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
             else -> "⏰ שעה לא זמינה"
         }
 
-        // מיקום האירוע
         holder.location.text = event.location?.let { "📍 $it" } ?: "📍New York"
 
-        // טעינת תמונה (אם קיימת תמונה)
-        val imageUrl = event.attachments?.firstOrNull()?.fileUrl ?: "" // בדיקת תמונה ראשונה אם קיימת
+        val imageUrl = event.attachments?.firstOrNull()?.fileUrl ?: ""
         if (imageUrl.isNotEmpty()) {
             Picasso.get()
                 .load(imageUrl)
-                .placeholder(R.drawable.error_image) // תמונת טעינה זמנית
-                .error(R.drawable.error_image) // אם התמונה לא קיימת
+                .placeholder(R.drawable.error_image)
+                .error(R.drawable.error_image)
                 .into(holder.eventImage)
         } else {
-            holder.eventImage.setImageResource(R.drawable.ic_calendar) // תמונת ברירת מחדל
+            holder.eventImage.setImageResource(R.drawable.ic_calendar)
         }
 
-        // כאשר לוחצים על אירוע -> פותח את הדף שלו בדפדפן
         holder.itemView.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = android.net.Uri.parse(event.htmlLink)
@@ -81,12 +76,12 @@ class ApiEventAdapter(private val context: Context, private val events: List<Goo
 
     private fun formatDate(date: String): String {
         return try {
-            if (date.length == 10) { // אם הפורמט הוא YYYY-MM-DD
+            if (date.length == 10) {
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                 val parsedDate = inputFormat.parse(date)
                 outputFormat.format(parsedDate!!)
-            } else { // אם הפורמט מכיל גם שעה
+            } else {
                 val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
                 inputFormat.timeZone = TimeZone.getTimeZone("UTC")
 

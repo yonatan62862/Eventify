@@ -21,14 +21,12 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // בדיקה אם המשתמש כבר מחובר
         if (auth.currentUser != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        // לחיצה על כפתור Login
         binding.btnLogin.setOnClickListener {
             val email = binding.email.text.toString().trim()
             val password = binding.password.text.toString().trim()
@@ -37,19 +35,16 @@ class LoginActivity : AppCompatActivity() {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // מעבר ל-MainActivity לאחר התחברות מוצלחת
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
-                            // טיפול בשגיאה
                             binding.email.error = "Login failed"
                         }
                     }
             }
         }
 
-        // מעבר לעמוד Register
         binding.registerNow.setOnClickListener {
             // Intent to navigate to RegisterActivity
             startActivity(Intent(this, RegisterActivity::class.java))

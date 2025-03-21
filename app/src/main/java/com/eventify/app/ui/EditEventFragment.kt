@@ -153,6 +153,5 @@ class EditEventFragment : Fragment() {
     }
 }
 
-/** פונקציה להמרת `String` ל- `Editable`, כדי למנוע שגיאות Type mismatch */
 fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 

@@ -52,7 +52,6 @@ class EventAdapter(
                 onDeleteClick(event.id)
             }
 
-            // 🔹 הוסף כאן את הבדיקה של ה-UID
             Log.d("EventAdapter", "Event Owner ID: ${event.ownerId}, Current User ID: ${FirebaseAuth.getInstance().currentUser?.uid}")
 
             if (event.ownerId == FirebaseAuth.getInstance().currentUser?.uid) {

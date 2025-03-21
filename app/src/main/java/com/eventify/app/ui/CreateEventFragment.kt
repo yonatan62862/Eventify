@@ -121,7 +121,7 @@ class CreateEventFragment : Fragment() {
 
         val db = FirebaseFirestore.getInstance()
         db.collection("users")
-            .whereIn("email", emails) // מבצע חיפוש במכה אחת
+            .whereIn("email", emails)
             .get()
             .addOnSuccessListener { documents ->
                 val invitedUserIds = documents.map { it.id }
@@ -158,7 +158,6 @@ class CreateEventFragment : Fragment() {
         fetchUserIdsFromEmails(invitedEmails) { invitedUserIds ->
             lifecycleScope.launch {
                 try {
-                    // העלאת תמונה ויצירת אובייקט האירוע במקביל
                     val imageUploadDeferred = async(Dispatchers.IO) { uploadImageToCloudinary() }
                     val imageUrl = imageUploadDeferred.await()
 
@@ -179,7 +178,6 @@ class CreateEventFragment : Fragment() {
                         imageUrl = imageUrl
                     )
 
-                    // שמירת האירוע במסד הנתונים (Firestore ו-Room) במקביל
                     val roomSaveDeferred = async { eventViewModel.insertEvent(event) }
                     val firestoreSaveDeferred = async { saveEventToFirestore(event) }
 
